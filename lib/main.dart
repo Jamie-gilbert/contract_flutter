@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/bean/contract.dart';
+import 'package:untitled1/net/net_untils.dart';
 
 void main() {
   runApp(new MaterialApp(home: new ContractList()));
@@ -14,20 +15,7 @@ class ContractList extends StatefulWidget {
 }
 
 class ContractListState extends State<ContractList> {
-  Widget buildeListAdapter(BuildContext context, String item) {
-    return new ListTile(
-        isThreeLine: true,
-        dense: false,
-        leading: new CircleAvatar(
-          child: new Text(item),
-        ),
-        title: new Text("子title的标题"),
-        subtitle: new Text("子title的内容"),
-        trailing: new Icon(
-          Icons.arrow_right,
-          color: Colors.green,
-        ));
-  }
+  TextEditingController _controller = new TextEditingController();
 
   Widget buildContractTile(BuildContext context, ContractBean bean) {
     return new Card(
@@ -60,6 +48,12 @@ class ContractListState extends State<ContractList> {
     );
   }
 
+  //获取输入的查询条件
+
+  void getValue(String value) {
+    print(load("https://www.baidu.com/").toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     List<ContractBean> been = initList();
@@ -73,10 +67,27 @@ class ContractListState extends State<ContractList> {
     contractTile = ListTile.divideTiles(context: context, tiles: listAdapter);
     return new Scaffold(
         appBar: new AppBar(
-
-        ),
+            title: new Row(children: <Widget>[
+          new Expanded(
+              child: new TextField(
+            decoration: new InputDecoration(labelText: "搜索"),
+            onSubmitted: getValue,
+            controller: _controller,
+          )),
+          new Expanded(
+              child: new IconButton(
+            icon: new Icon(Icons.search),
+            onPressed: clickSearch,
+          ))
+        ])),
         body: new Scrollbar(
             child: new ListView(children: contractTile.toList())));
+  }
+
+  void clickSearch() {
+    //使键盘消失
+    FocusScope.of(this.context).requestFocus(new FocusNode());
+    getValue(_controller.text);
   }
 
   List<ContractBean> initList() {
